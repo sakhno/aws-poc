@@ -7,7 +7,7 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
-      - $(aws ecr get-login --region us-east-2)
+      - $(aws ecr get-login --region eu-west-2)
       - REPOSITORY_URI=101223776850.dkr.ecr.eu-west-2.amazonaws.com/aws-poc
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
