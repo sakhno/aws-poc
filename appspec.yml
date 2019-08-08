@@ -1,18 +1,30 @@
 version: 0.0
 os: linux
-files:
-  - source: /src/
-    destination: /var/www/html/
+#files:
+#  - source: /src/
+#    destination: /var/www/html/
+#hooks:
+#  BeforeInstall:
+#    - location: scripts/install_dependencies
+#      timeout: 300
+#      runas: root
+#    - location: scripts/start_server
+#      timeout: 300
+#      runas: root
+#  ApplicationStop:
+#    - location: scripts/stop_server
+#      timeout: 300
+#      runas: root
 hooks:
   BeforeInstall:
-    - location: scripts/install_dependencies
+    - location: docker_scripts/install_dep.sh
       timeout: 300
       runas: root
-    - location: scripts/start_server
+    - location: docker_scripts/start.sh
       timeout: 300
       runas: root
   ApplicationStop:
-    - location: scripts/stop_server
+    - location: docker_scripts/stop.sh
       timeout: 300
       runas: root
 
