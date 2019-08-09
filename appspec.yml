@@ -15,6 +15,11 @@ os: linux
 #    - location: scripts/stop_server
 #      timeout: 300
 #      runas: root
+files:
+  - source: /src/
+    destination: /temp/build
+  - source: Dockerfile
+    destination: /temp/build
 hooks:
   BeforeInstall:
     - location: docker_scripts/install_dep.sh

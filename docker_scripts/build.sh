@@ -1,4 +1,3 @@
 #!/bin/bash
-pwd
-ls -l
+cd /temp/build
 docker build -t aws-poc-image .
