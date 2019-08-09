@@ -116,15 +116,15 @@ Resources:
               InputArtifacts:
                 - Name: SourceOutput
               OutputArtifacts:
-                - Name: SourceOutput
+                - Name: BuildOutput
               Configuration:
-                ApplicationName: !Ref BuildName
+                ProjectName: !Ref BuildName
               RunOrder: 1
         - Name: Beta
           Actions:
             - Name: BetaAction
               InputArtifacts:
-                - Name: SourceOutput
+                - Name: BuildOutput
               ActionTypeId:
                 Category: Deploy
                 Owner: AWS
