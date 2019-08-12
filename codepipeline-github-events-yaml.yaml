@@ -125,6 +125,7 @@ Resources:
             - Name: BetaAction
               InputArtifacts:
                 - Name: BuildOutput
+                - Name: SourceOutput
               ActionTypeId:
                 Category: Deploy
                 Owner: AWS
