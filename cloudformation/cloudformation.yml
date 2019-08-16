@@ -281,6 +281,9 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:2.0
         PrivilegedMode: true
+        EnvironmentVariables:
+          - Name: IMAGE_REPOSITORY
+            Value: !GetAtt ProjectImageRepo.Name
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -349,20 +352,6 @@ Resources:
     Type: AWS::CodeDeploy::DeploymentGroup
     Properties:
       ApplicationName: !Ref CodeDeployApplication
-#      Deployment:
-#        IgnoreApplicationStopFailures: true
-#        Revision:
-#          RevisionType: S3
-#          S3Location:
-#            Bucket:
-#              Ref: Bucket
-#            Key:
-#              Ref: Key
-#            BundleType: Zip
-#            ETag:
-#              Ref: ETag
-#            Version:
-#              Ref: Version
       Ec2TagFilters:
         - Key: ec2GroupTag
           Value: aws-poc-docker
@@ -403,3 +392,7 @@ Resources:
                   "s3:GetObjectVersion"]
                 Effect: Allow
                 Resource: '*'
+  ProjectImageRepo:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: aws-poc-image-repository

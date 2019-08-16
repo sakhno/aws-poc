@@ -5,7 +5,6 @@ hooks:
     - location: docker_scripts/pull.sh
       timeout: 300
       runas: root
-
   ApplicationStart:
     - location: docker_scripts/run.sh
       timeout: 300
