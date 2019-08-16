@@ -285,8 +285,9 @@ Resources:
         Image: aws/codebuild/standard:2.0
         PrivilegedMode: true
         EnvironmentVariables:
-          - Name: IMAGE_REPOSITORY
+          - Name: IMAGE_REPOSITORY_NAME
             Value: !Ref ImageRepositoryName
+#            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${dockerrepocompanycom}
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
