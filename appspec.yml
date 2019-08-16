@@ -15,22 +15,20 @@ os: linux
 #    - location: scripts/stop_server
 #      timeout: 300
 #      runas: root
-files:
-  - source: /src/
-    destination: /temp/build
-  - source: Dockerfile
-    destination: /temp/build
+#files:
+#  - source: /src/
+#    destination: /temp/build
+#  - source: Dockerfile
+#    destination: /temp/build
 hooks:
   BeforeInstall:
-#    - location: docker_scripts/install_dep.sh
-#      timeout: 300
-#      runas: root
-#    - location: docker_scripts/build.sh
-#      timeout: 300
-#      runas: root
-    - location: docker_scripts/run.sh
+    - location: docker_scripts/pull.sh
       timeout: 300
       runas: root
+  ApplicationStart:
+    - location: docker_scripts/run.sh
+        timeout: 300
+        runas: root
   ApplicationStop:
     - location: docker_scripts/stop.sh
       timeout: 300
