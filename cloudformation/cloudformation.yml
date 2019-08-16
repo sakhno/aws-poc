@@ -28,6 +28,9 @@ Parameters:
     Description: Build configured in CodeBuild
     Type: String
     Default: aws-poc
+  ImageRepositoryName:
+    Type: String
+    Default: aws-poc-image-repository
 Resources:
   EC2Server:
     Type: AWS::EC2::Instance
@@ -283,7 +286,7 @@ Resources:
         PrivilegedMode: true
         EnvironmentVariables:
           - Name: IMAGE_REPOSITORY
-            Value: !GetAtt ProjectImageRepo.Name
+            Value: !Ref ImageRepositoryName
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -395,4 +398,4 @@ Resources:
   ProjectImageRepo:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: aws-poc-image-repository
+      RepositoryName: !Ref ImageRepositoryName
