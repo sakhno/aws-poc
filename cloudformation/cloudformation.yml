@@ -207,7 +207,32 @@ Resources:
     Type: AWS::IAM::InstanceProfile
     Properties:
       Roles:
-        - EC2
+        - !Ref EC2ServiceRole
+  EC2ServiceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: S3WithECR
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:*'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'ecr:*'
+                Resource: '*'
   CodePipelineServiceRole:
     Type: 'AWS::IAM::Role'
     Properties:
