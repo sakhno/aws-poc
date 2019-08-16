@@ -36,6 +36,9 @@ Resources:
       IamInstanceProfile: !Ref EC2ServiceAIMProfile
       ImageId: ami-0bdfa1adc3878cd23
       InstanceType: t2.micro
+      Tags:
+        - Key: ec2GroupTag
+          Value: aws-poc-docker
       NetworkInterfaces:
         - GroupSet:
             - !Ref EC2SecurityGroup
@@ -190,8 +193,8 @@ Resources:
                 Version: 1
                 Provider: CodeDeploy
               Configuration:
-                ApplicationName: !Ref ApplicationName
-                DeploymentGroupName: !Ref BetaFleet
+                ApplicationName: !Ref CodeDeployApplication
+                DeploymentGroupName: !Ref DeploymentGroup
               RunOrder: 1
       ArtifactStore:
         Type: S3
@@ -244,14 +247,13 @@ Resources:
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      ServiceRole: !GetAtt [ CodeBuildRole, Arn ]
-#      ServiceRole: arn:aws:iam::101223776850:role/service-role/codebuild-aws-poc-service-role
+      ServiceRole: !GetAtt CodeBuildRole.Arn
       Artifacts:
         Type: CODEPIPELINE
       Environment:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/standart:2.0
+        Image: aws/codebuild/standard:2.0
         PrivilegedMode: true
       Source:
         Type: CODEPIPELINE
@@ -260,14 +262,14 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
+        Version: '2012-10-17'
         Statement:
-          - Action:
-              - sts:AssumeRole
+          - Action: sts:AssumeRole
             Effect: Allow
             Principal:
               Service:
                 - codebuild.amazonaws.com
-        Version: '2012-10-17'
+
       Path: /
       Policies:
         - PolicyName: CodeBuildAccess
@@ -276,10 +278,10 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: [
-                    "logs:CreateLogGroup",
-                    "logs:CreateLogStream",
-                    "logs:PutLogEvents",
-                    "logs:DescribeLogStreams"]
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents",
+                  "logs:DescribeLogStreams"]
                 Resource: "arn:aws:logs:*:*:*"
               - Action:
                   - 'ec2:CreateNetworkInterface'
@@ -293,18 +295,80 @@ Resources:
                 Effect: Allow
                 Resource: '*'
               - Action: [
-                  "ecr:BatchCheckLayerAvailability",
-                  "ecr:GetDownloadUrlForLayer",
-                  "ecr:GetRepositoryPolicy",
-                  "ecr:DescribeRepositories",
-                  "ecr:ListImages",
-                  "ecr:DescribeImages",
-                  "ecr:BatchGetImage",
-                  "ecr:CompleteLayerUpload",
-                  "ecr:GetAuthorizationToken",
-                  "ecr:InitiateLayerUpload",
-                  "ecr:PutImage",
-                  "ecr:UploadLayerPart"]
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:GetRepositoryPolicy",
+                "ecr:DescribeRepositories",
+                "ecr:ListImages",
+                "ecr:DescribeImages",
+                "ecr:BatchGetImage",
+                "ecr:CompleteLayerUpload",
+                "ecr:GetAuthorizationToken",
+                "ecr:InitiateLayerUpload",
+                "ecr:PutImage",
+                "ecr:UploadLayerPart"]
+                Effect: Allow
+                Resource: '*'
+              - Action: [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:GetObjectVersion"]
+                Effect: Allow
+                Resource: '*'
+  CodeDeployApplication:
+    Type: AWS::CodeDeploy::Application
+    Properties:
+      ComputePlatform: Server
+  DeploymentGroup:
+    Type: AWS::CodeDeploy::DeploymentGroup
+    Properties:
+      ApplicationName: !Ref CodeDeployApplication
+#      Deployment:
+#        IgnoreApplicationStopFailures: true
+#        Revision:
+#          RevisionType: S3
+#          S3Location:
+#            Bucket:
+#              Ref: Bucket
+#            Key:
+#              Ref: Key
+#            BundleType: Zip
+#            ETag:
+#              Ref: ETag
+#            Version:
+#              Ref: Version
+      Ec2TagFilters:
+        - Key: ec2GroupTag
+          Value: aws-poc-docker
+          Type: KEY_AND_VALUE
+      ServiceRoleArn: !GetAtt CodeDeployRole.Arn
+  CodeDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - codedeploy.amazonaws.com
+      Path: /
+      Policies:
+        - PolicyName: CodeDeployAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents",
+                  "logs:DescribeLogStreams"]
+                Resource: "arn:aws:logs:*:*:*"
+              - Action:
+                  - 'ec2:*'
                 Effect: Allow
                 Resource: '*'
               - Action: [

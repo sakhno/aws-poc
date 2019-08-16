@@ -22,9 +22,9 @@ files:
     destination: /temp/build
 hooks:
   BeforeInstall:
-    - location: docker_scripts/install_dep.sh
-      timeout: 300
-      runas: root
+#    - location: docker_scripts/install_dep.sh
+#      timeout: 300
+#      runas: root
 #    - location: docker_scripts/build.sh
 #      timeout: 300
 #      runas: root
