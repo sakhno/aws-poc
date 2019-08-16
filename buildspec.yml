@@ -10,7 +10,7 @@ phases:
       - $(aws ecr get-login --region eu-west-2 --no-include-email)
 #      - REPOSITORY_URI=101223776850.dkr.ecr.eu-west-2.amazonaws.com/aws-poc
       - REPOSITORY_URI=IMAGE_REPOSITORY
-      - echo image repo is REPOSITORY_URI
+      - echo image repo is $REPOSITORY_URI
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
   build:
