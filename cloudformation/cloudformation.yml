@@ -30,7 +30,7 @@ Parameters:
     Default: aws-poc
   ImageRepositoryName:
     Type: String
-    Default: aws-poc-image-repository
+    Default: aws-poc
 Resources:
   EC2Server:
     Type: AWS::EC2::Instance
