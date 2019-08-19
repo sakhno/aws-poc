@@ -30,8 +30,7 @@ Parameters:
     Default: aws-poc
   ImageRepositoryName:
     Type: String
-#    Default: aws-poc-image-repository
-    Default: aws-poc
+    Default: aws-poc-image-repository
 Resources:
   EC2Server:
     Type: AWS::EC2::Instance
@@ -399,24 +398,24 @@ Resources:
                   "s3:GetObjectVersion"]
                 Effect: Allow
                 Resource: '*'
-#  ProjectImageRepo:
-#    Type: AWS::ECR::Repository
-#    Properties:
-#      RepositoryName: !Ref ImageRepositoryName
-#      RepositoryPolicyText:
-#        Version: "2012-10-17"
-#        Statement:
-#          - Sid: AllowPushPull
-#            Effect: Allow
-#            Principal:
-#              AWS:
-#                - !GetAtt CodeBuildProject.Arn
-##                - "arn:aws:iam::123456789012:user/Alice"
-#            Action:
-#              - "ecr:GetDownloadUrlForLayer"
-#              - "ecr:BatchGetImage"
-#              - "ecr:BatchCheckLayerAvailability"
-#              - "ecr:PutImage"
-#              - "ecr:InitiateLayerUpload"
-#              - "ecr:UploadLayerPart"
-#              - "ecr:CompleteLayerUpload"
+  ProjectImageRepo:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Ref ImageRepositoryName
+      RepositoryPolicyText:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal:
+              AWS:
+                - !GetAtt CodeBuildProject.Arn
+#                - "arn:aws:iam::123456789012:user/Alice"
+            Action:
+              - "ecr:GetDownloadUrlForLayer"
+              - "ecr:BatchGetImage"
+              - "ecr:BatchCheckLayerAvailability"
+              - "ecr:PutImage"
+              - "ecr:InitiateLayerUpload"
+              - "ecr:UploadLayerPart"
+              - "ecr:CompleteLayerUpload"
