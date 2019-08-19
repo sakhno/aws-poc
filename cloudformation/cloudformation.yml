@@ -49,18 +49,23 @@ Resources:
           DeviceIndex: '0'
           DeleteOnTermination: true
           SubnetId: !Ref PublicCloudFormationSubnet
-      UserData: !Base64 |
-        #!/bin/bash
-        yum -y update
-        yum install -y ruby
-        yum install -y aws-cli
-        yum install -y docker
-        service docker start
-        usermod -a -G docker ec2-user
-        cd /home/ec2-user
-        aws s3 cp s3://aws-codedeploy-us-east-2/latest/install . --region us-east-2
-        chmod +x ./install
-        ./install auto
+      UserData:
+        Fn::Base64: !Sub
+          - |
+            #!/bin/bash
+            yum -y update
+            yum install -y ruby
+            yum install -y aws-cli
+            yum install -y docker
+            service docker start
+            usermod -a -G docker ec2-user
+            echo 'export DOCKER_IMAGE_NAME=${docker_image_name}' >> /etc/profile
+            source /etc/profile
+            cd /home/ec2-user
+            aws s3 cp s3://aws-codedeploy-us-east-2/latest/install . --region us-east-2
+            chmod +x ./install
+            ./install auto
+          - docker_image_name: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ImageRepositoryName}"
   PublicCloudFormationSubnet:
     Type: AWS::EC2::Subnet
     Properties:
@@ -289,7 +294,6 @@ Resources:
             Value: !Ref ImageRepositoryName
           - Name: AWS_ACCOUNT_ID
             Value: !Ref AWS::AccountId
-#            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${dockerrepocompanycom}
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -402,20 +406,3 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: !Ref ImageRepositoryName
-      RepositoryPolicyText:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: AllowPushPull
-            Effect: Allow
-            Principal:
-              AWS:
-                - !GetAtt CodeBuildProject.Arn
-#                - "arn:aws:iam::123456789012:user/Alice"
-            Action:
-              - "ecr:GetDownloadUrlForLayer"
-              - "ecr:BatchGetImage"
-              - "ecr:BatchCheckLayerAvailability"
-              - "ecr:PutImage"
-              - "ecr:InitiateLayerUpload"
-              - "ecr:UploadLayerPart"
-              - "ecr:CompleteLayerUpload"
